@@ -1,0 +1,2 @@
+rootProject.name = "ExifDataViewer"
+include ':app'
