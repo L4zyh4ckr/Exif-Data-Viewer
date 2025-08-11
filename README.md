@@ -12,4 +12,4 @@ An Android app that extracts and displays EXIF and metadata from photos, videos,
 
 ## How to build and run
 
-1. Clone the repo:
+1. Clone the repo: https://github.com/L4zyh4ckr/Exif-Data-Viewer
