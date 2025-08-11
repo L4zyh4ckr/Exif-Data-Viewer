@@ -19,11 +19,23 @@ jobs:
         distribution: temurin
         java-version: 17
 
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 33
+        build-tools-version: 33.0.2
+
+    - name: Accept Android SDK licenses
+      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
     - name: Build Debug APK
-      run: ./gradlew assembleDebug
+      run: ./gradlew assembleDebug --stacktrace --info
+
+    - name: Verify APK
+      run: ls -l app/build/outputs/apk/debug/
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v4  # <--- updated here
+      uses: actions/upload-artifact@v4
       with:
         name: app-debug.apk
         path: app/build/outputs/apk/debug/app-debug.apk
