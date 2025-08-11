@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -19,14 +18,26 @@ jobs:
         distribution: temurin
         java-version: 17
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v2
-      with:
-        api-level: 33
-        build-tools-version: 33.0.2
+    - name: Install Android SDK Command Line Tools
+      run: |
+        sudo mkdir -p /usr/local/android-sdk/cmdline-tools
+        cd /usr/local/android-sdk
+        sudo wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+        sudo unzip cmdline-tools.zip -d cmdline-tools
+        sudo rm cmdline-tools.zip
 
-    - name: Accept Android SDK licenses
-      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+    - name: Set ANDROID_HOME environment variable
+      run: echo "ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
+
+    - name: Update PATH
+      run: echo "/usr/local/android-sdk/cmdline-tools/tools/bin" >> $GITHUB_PATH
+
+    - name: Install SDK packages
+      run: |
+        sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+    - name: Accept licenses
+      run: yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --stacktrace --info
